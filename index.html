@@ -1,0 +1,182 @@
+<!DOCTYPE html><html><head><title></title><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" /><style type='text/css'>
+body {
+  font-family: 'Helvetica';
+  background:#000;
+  background-size:100%;
+  color:#fff;
+  margin:0;
+  padding:0;
+  font-weight:bold;
+}
+
+h1, h2, h3, p {
+  margin:0;
+}
+
+em, a {
+  font-style:normal;
+  color:#8dbd0c;
+}
+
+a {
+  background: #34d0e7;
+  color:#000;
+  text-decoration:none;
+}
+
+img {
+  width:100%;
+}
+
+div {
+  cursor:pointer;
+  cursor:hand;
+  position:absolute;
+  top:0px;
+  left:0px;
+  padding:75px;
+  line-height:97%;
+}
+
+div.center {
+  text-align:center;
+}
+
+div.imageText {
+  text-shadow:0px 0px 5px rgba(0,0,0,0.2);
+}
+</style><script type='text/javascript'>
+window.onload = function() {
+    var s = document.getElementsByTagName('div'), cur = 0, ti;
+    if (!s) return;
+    function go(n) {
+        cur = n;
+        var i = 1e3, e = s[n], t;
+        for (var k = 0; k < s.length; k++) s[k].style.display = 'none';
+        e.style.display = 'inline';
+        e.style.fontSize = i + 'px';
+        if (e.firstChild.nodeName === 'IMG') {
+            document.body.style.backgroundImage = 'url(' + e.firstChild.src + ')';
+            e.firstChild.style.display = 'none';
+            if ('classList' in e) e.classList.add('imageText');
+        } else {
+            document.body.style.backgroundImage = '';
+            document.body.style.backgroundColor = e.style.backgroundColor;
+        }
+        if (ti !== undefined) window.clearInterval(ti);
+        t = parseInt(e.getAttribute('time-to-next') || 0, 10);
+        if (t > 0) ti = window.setTimeout(fwd, (t * 1000));
+        while (
+            e.offsetWidth > window.innerWidth ||
+            e.offsetHeight > window.innerHeight) {
+            e.style.fontSize = (i -= 2) + 'px';
+            if (i < 0) break;
+        }
+        e.style.marginTop = ((window.innerHeight - e.offsetHeight) / 2) + 'px';
+        if (window.location.hash !== n) window.location.hash = n;
+        document.title = e.textContent || e.innerText;
+    }
+    document.onclick = function() { go(++cur % (s.length)); };
+    function fwd() { go(Math.min(s.length - 1, ++cur)); }
+    function rev() { go(Math.max(0, --cur)); }
+    document.onkeydown = function(e) {
+        if (e.which === 39) fwd();
+        if (e.which === 37) rev();
+    };
+    document.ontouchstart = function(e) {
+        var x0 = e.changedTouches[0].pageX;
+        document.ontouchend = function(e) {
+            var x1 = e.changedTouches[0].pageX;
+            if (x1 - x0 < 0) fwd();
+            if (x1 - x0 > 0) rev();
+        };
+    };
+    function parse_hash() {
+        return Math.max(Math.min(
+            s.length - 1,
+            parseInt(window.location.hash.substring(1), 10)), 0);
+    }
+    if (window.location.hash) cur = parse_hash() || cur;
+    window.onhashchange = function() {
+        var c = parse_hash();
+        if (c !== cur) go(c);
+    };
+
+    go(cur);
+};
+</script></head><body>
+<div>
+    <ol>
+        <li>Make a map</li>
+        <li>Short boring part</li>
+        <li>Add data to the map</li>
+        <li>???</li>
+    </ol>
+</div>
+<div>
+    <a href="https://www.mapbox.com/mapbox.js/example/v1.0.0/">mapbox.com/mapbox.js/example/v1.0.0</a>
+    <br><br>
+    save as <code>index.html</code><br>
+    in <code>maptime</code> folder
+</div>
+<div>
+    <img src="map-id.png"><br>
+    Map  ID
+</div>
+<div>
+    <pre>.setView([<em>37.762</em>, <em>-122.445</em>], <em>12</em>);</pre>
+</div>
+<div>
+    <pre>cd maptime
+python -m SimpleHTTPServer</pre>
+    <em>localhost:8000</em>
+</div>
+<div>
+    what is <em>mapbox.js</em>?
+    what is <em>leaflet</em>?
+</div>
+<div>
+    <a href="https://data.sfgov.org/Geography/Supervisorial-Districts-as-of-April-2012/xz9b-wyfc">SF Supervisorial Districts</a>
+</div>
+<div>
+    <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset=utf-8 /&gt;
+&lt;title&gt;A Simple Map&lt;/title&gt;
+
+&lt;meta name=&#39;viewport&#39; content=&#39;width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no&#39; /&gt;
+&lt;script src=&#39;https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.js&#39;&gt;&lt;/script&gt;
+&lt;link href=&#39;https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.css&#39; rel=&#39;stylesheet&#39; /&gt;
+<em>&lt;script src=&#39;https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.0.1/leaflet-omnivore.min.js&#39;&gt;&lt;/script&gt;</em>
+
+&lt;style&gt;
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+
+&lt;div id=&#39;map&#39;&gt;&lt;/div&gt;
+&lt;script&gt;
+var map = L.mapbox.map(&#39;map&#39;, &#39;jfire.map-4elc2zp1&#39;)
+    .setView([37.762, -122.445], 12);
+
+<em>omnivore.kml(&#39;https://data.sfgov.org/api/geospatial/xz9b-wyfc?method=export&amp;format=KML&#39;)
+    .addTo(map);</em>
+&lt;/script&gt;
+
+
+&lt;/body&gt;
+&lt;/html&gt;
+    </pre>
+</div>
+<div>
+    Examples:
+    <a href="https://www.mapbox.com/mapbox.js/example/v1.0.0/">mapbox.com/mapbox.js/example/v1.0.0</a>
+    <br><br>
+    Plugins:
+    <a href="https://www.mapbox.com/mapbox.js/plugins/">mapbox.com/mapbox.js/plugins</a>
+</div>
